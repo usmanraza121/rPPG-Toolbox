@@ -188,7 +188,7 @@ if __name__ == "__main__":
     sys.stderr = Tee(sys.stderr, logfile)
 
     # configurations.
-    config = get_config(args)
+    # config = get_config(args)
     print('------------------Model training --------------------------')
     print('Configuration:')
     print(config, end='\n\n')
