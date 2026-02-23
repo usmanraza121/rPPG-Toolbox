@@ -28,7 +28,7 @@ class BaseTrainer:
 
     def save_test_outputs(self, predictions, labels, config):
     
-        output_dir = config.TEST.OUTPUT_SAVE_DIR
+        output_dir = config.LOG.PATH + "/outputs"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir, exist_ok=True)
         
