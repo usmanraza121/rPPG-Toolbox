@@ -146,13 +146,6 @@ def setup_run_dir(base_dir, model_name):
         os.makedirs(checkpoint_dir, exist_ok=True)
         log_file = os.path.join(run_dir, "training.log")
         return run_dir, checkpoint_dir, log_file
-    
-def setup_logger(log_file_path):
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s - %(levelname)s - %(message)s',
-                        handlers=[logging.StreamHandler(),
-                                logging.FileHandler(log_file_path)])
-    return logging.getLogger(__name__)
 class Tee(object):
         def __init__(self, *files):
             self.files = files
