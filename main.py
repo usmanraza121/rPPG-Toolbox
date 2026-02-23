@@ -5,7 +5,7 @@ import random
 import time
 import os
 import sys
-import logging
+# import logging
 from datetime import datetime
 
 import numpy as np
@@ -150,6 +150,7 @@ def setup_run_dir(base_dir, model_name):
         os.makedirs(checkpoint_dir, exist_ok=True)
         log_file = os.path.join(run_dir, "training.log")
         return run_dir, checkpoint_dir, log_file
+    
 class Tee(object):
         def __init__(self, *files):
             self.files = files
