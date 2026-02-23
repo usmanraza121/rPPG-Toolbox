@@ -137,17 +137,62 @@ def unsupervised_method_inference(config, data_loader):
         else:
             raise ValueError("Not supported unsupervised method!")
 
+def setup_run_dir(base_dir, model_name):
+        """Create a unique run directory for this training session."""
+        current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        run_dir = os.path.join(base_dir, f"{model_name}_{current_time}")
+        os.makedirs(run_dir, exist_ok=True)
+        checkpoint_dir = os.path.join(run_dir, "checkpoints")
+        os.makedirs(checkpoint_dir, exist_ok=True)
+        log_file = os.path.join(run_dir, "training.log")
+        return run_dir, checkpoint_dir, log_file
+    
+def setup_logger(log_file_path):
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s - %(levelname)s - %(message)s',
+                        handlers=[logging.StreamHandler(),
+                                logging.FileHandler(log_file_path)])
+    return logging.getLogger(__name__)
+class Tee(object):
+        def __init__(self, *files):
+            self.files = files
+
+        def write(self, obj):
+            for f in self.files:
+                f.write(obj)
+                f.flush()
+
+        def flush(self):
+            for f in self.files:
+                f.flush()
+
 
 if __name__ == "__main__":
     # parse arguments.
+    global logger
     parser = argparse.ArgumentParser()
     parser = add_args(parser)
     parser = trainer.BaseTrainer.BaseTrainer.add_trainer_args(parser)
     parser = data_loader.BaseLoader.BaseLoader.add_data_loader_args(parser)
     args = parser.parse_args()
+    
+    config = get_config(args)
+    run_dir, checkpoint_dir, log_file = setup_run_dir('runs', config.MODEL.NAME)
+
+    config.defrost()
+    config.LOG.PATH = run_dir  # Update config with the new run directory
+    config.MODEL.MODEL_DIR = checkpoint_dir  # Update config with the new checkpoint directory
+    config.freeze() 
+    
+    logfile = open(log_file, "a")
+
+    # Send print output to both console and file
+    sys.stdout = Tee(sys.stdout, logfile)
+    sys.stderr = Tee(sys.stderr, logfile)
 
     # configurations.
     config = get_config(args)
+    print('------------------Model training --------------------------')
     print('Configuration:')
     print(config, end='\n\n')
 
